@@ -336,7 +336,7 @@ h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
 </div>
 
 <header class="hero" id="inicio" data-palette="hero">
-  <div class="meadow" aria-hidden="true"><img id="meadow" src="img/campo.jpg" alt="" width="2167" height="2200"></div>
+  <div class="meadow" aria-hidden="true"><img id="meadow" src="img/campo-hd.jpg" alt="" width="2872" height="2902"></div>
   <div class="lockup" id="lockup">
     <h1 class="rise"><span class="lean" id="lean"><img src="img/logo.webp" alt="Fue Canónico" width="1500" height="712"></span></h1>
     <p class="genre label rise" style="--d:300ms">
@@ -803,7 +803,7 @@ h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
     var loader = document.getElementById('loader');
     function decode(src) { return new Promise(function (res) { var i = new Image(); i.onload = function () { (i.decode ? i.decode() : Promise.resolve()).then(res, res); }; i.onerror = res; i.src = src; }); }
     var ready = Promise.all([
-      decode('img/campo.jpg'), decode('img/logo.webp'),
+      decode('img/campo-hd.jpg'), decode('img/logo.webp'),
       document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()
     ]);
     var atLeast = new Promise(function (res) { setTimeout(res, 900); });
