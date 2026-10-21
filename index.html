@@ -148,16 +148,21 @@ h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
 .meaning h2 { font-family: var(--script); font-size: clamp(2rem, 1.3rem + 2.2vw, 3.4rem); line-height: 1; color: #fff3e6; text-shadow: 0 2px 22px rgba(20, 30, 40, .5), 0 0 16px rgba(255, 238, 222, .6), 0 0 36px rgba(255, 200, 175, .35); }
 .quote { margin: 0; width: 100%; }
 .quote .frame { position: relative; max-width: 21ch; margin-inline: auto; font-family: var(--display); font-size: clamp(1.9rem, 1rem + 2.9vw, 3.7rem); }
-.quote .q { position: absolute; font-family: var(--script); font-size: 2.3em; line-height: 1; color: #f6b49a; opacity: .9; pointer-events: none;
+.quote .q { position: relative; display: inline-block; font-size: 1.7em; line-height: 0; vertical-align: -.42em; font-family: var(--script); color: #f6b49a; opacity: .9; pointer-events: none;
   text-shadow: 0 2px 30px rgba(20, 30, 40, .35); animation: drift-q 9s ease-in-out infinite alternate; }
-.quote .q.open { left: -.42em; top: -.3em; }
-/* closing mark rides on the last word so it can never drift away from the text */
-.quote .tail { white-space: nowrap; }
-.quote .q.close { position: relative; display: inline-block; font-size: 1.7em; line-height: 0; vertical-align: -.42em; margin-left: .04em; animation-delay: -4.5s; }
-@keyframes drift-q { from { transform: translate(0, 0) rotate(-4deg); } to { transform: translate(4px, -10px) rotate(3deg); } }
+/* both marks ride on their word (first and last), same size, same height, same breath, so they mirror each other */
+.quote .head, .quote .tail { white-space: nowrap; }
+/* Pinyon's marks overhang their advance (open to the right, close to the left): even out the gap to the word */
+.quote .q.open { margin-right: .2em; }
+.quote .q.close { margin-left: -.1em; }
+@keyframes drift-q { from { transform: translateY(0); } to { transform: translateY(-.08em); } }
 .quote p { font-size: 1em; line-height: 1.14; letter-spacing: .005em; color: #fff8f0; text-wrap: balance;
   text-shadow: 0 2px 26px rgba(15, 25, 35, .5), 0 0 2px rgba(15, 25, 35, .25), 0 0 14px rgba(255, 240, 225, .55), 0 0 34px rgba(255, 205, 180, .35);
   animation: glow-q 6s ease-in-out infinite alternate; }
+@keyframes glow-q-m {
+  from { text-shadow: 0 1px 3px rgba(10, 16, 24, .55), 0 2px 20px rgba(10, 16, 24, .6), 0 0 12px rgba(255, 240, 225, .25); }
+  to   { text-shadow: 0 1px 3px rgba(10, 16, 24, .55), 0 2px 20px rgba(10, 16, 24, .6), 0 0 22px rgba(255, 244, 232, .5); }
+}
 @keyframes glow-q {
   from { text-shadow: 0 2px 26px rgba(15, 25, 35, .5), 0 0 2px rgba(15, 25, 35, .25), 0 0 12px rgba(255, 240, 225, .45), 0 0 28px rgba(255, 205, 180, .25); }
   to   { text-shadow: 0 2px 26px rgba(15, 25, 35, .5), 0 0 2px rgba(15, 25, 35, .25), 0 0 20px rgba(255, 244, 232, .8), 0 0 48px rgba(255, 205, 180, .5); }
@@ -288,7 +293,15 @@ h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
   .mark { width: 34px; }
   .meaning { padding-block: 2svh 26svh; }
   .quote .frame { max-width: 15ch; }
-  .quote .q.open { left: -.22em; }
+  /* the quote sits on the brightest part of the meadow: a soft dark veil and firmer shadows keep it readable */
+  .meaning { position: relative; isolation: isolate; }
+  .meaning::before { content: ""; position: absolute; z-index: -1; left: -12%; right: -12%; top: -2svh; bottom: 18svh; pointer-events: none;
+    background: radial-gradient(closest-side, rgba(10, 16, 24, .5), rgba(10, 16, 24, .32) 62%, transparent); }
+  .quote p { animation-name: glow-q-m; }
+  .quote p em { color: #ffd9c9; -webkit-text-stroke: .35px currentColor; }
+  .quote .q { color: #ffc7ad; }
+  .meaning h2 { text-shadow: 0 1px 3px rgba(10, 16, 24, .5), 0 2px 22px rgba(10, 16, 24, .55), 0 0 16px rgba(255, 238, 222, .4); }
+  .meaning .why { color: #fffaf4; text-shadow: 0 1px 3px rgba(10, 16, 24, .6), 0 1px 18px rgba(10, 16, 24, .7); }
   /* Italiana has a single hairline weight: a soft stroke and a darker halo keep NOSOTROS legible on the grass */
   .band h2 { font-size: 1.6rem; letter-spacing: .36em; text-indent: .36em; }
   .band h2 .l { -webkit-text-stroke: .7px currentColor; paint-order: stroke fill; animation-name: nos-m; }
@@ -338,8 +351,7 @@ h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
     <h2 class="rise">fue canónico</h2>
     <blockquote class="quote">
       <div class="frame">
-        <span class="q open" aria-hidden="true">“</span>
-        <p id="quote-words">Un evento inalterable destinado a suceder, que marca <em>un antes y un después</em> en la <span class="tail">historia<span class="q close" aria-hidden="true">”</span></span></p>
+        <p id="quote-words"><span class="head"><span class="q open" aria-hidden="true">“</span>Un</span> evento inalterable destinado a suceder, que marca <em>un antes y un después</em> en la <span class="tail">historia<span class="q close" aria-hidden="true">”</span></span></p>
       </div>
     </blockquote>
     <p class="why rise" style="--d:300ms">es como nos gustó definir la manera loca en la que coincidimos para iniciar este proyecto musical.</p>
