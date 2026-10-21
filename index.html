@@ -151,7 +151,9 @@ h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
 .quote .q { position: absolute; font-family: var(--script); font-size: 2.3em; line-height: 1; color: #f6b49a; opacity: .9; pointer-events: none;
   text-shadow: 0 2px 30px rgba(20, 30, 40, .35); animation: drift-q 9s ease-in-out infinite alternate; }
 .quote .q.open { left: -.42em; top: -.3em; }
-.quote .q.close { right: -.38em; bottom: -.72em; animation-delay: -4.5s; }
+/* closing mark rides on the last word so it can never drift away from the text */
+.quote .tail { white-space: nowrap; }
+.quote .q.close { position: relative; display: inline-block; font-size: 1.7em; line-height: 0; vertical-align: -.42em; margin-left: .04em; animation-delay: -4.5s; }
 @keyframes drift-q { from { transform: translate(0, 0) rotate(-4deg); } to { transform: translate(4px, -10px) rotate(3deg); } }
 .quote p { font-size: 1em; line-height: 1.14; letter-spacing: .005em; color: #fff8f0; text-wrap: balance;
   text-shadow: 0 2px 26px rgba(15, 25, 35, .5), 0 0 2px rgba(15, 25, 35, .25), 0 0 14px rgba(255, 240, 225, .55), 0 0 34px rgba(255, 205, 180, .35);
@@ -202,12 +204,18 @@ h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
   font-family: var(--display); font-size: clamp(1.3rem, .9rem + 1.3vw, 2.2rem); letter-spacing: .5em; text-indent: .5em; text-transform: uppercase; color: var(--cream); white-space: nowrap; }
 .band h2 .l { display: inline-block; text-shadow: 0 1px 14px rgba(10, 8, 6, .55);
   animation: nos 4.8s ease-in-out calc(var(--i) * .22s) infinite; }
+@keyframes nos-m {
+  0%, 100% { transform: translateY(0); opacity: .94; text-shadow: 0 1px 3px rgba(10, 8, 6, .65), 0 1px 16px rgba(10, 8, 6, .6); }
+  50% { transform: translateY(-6px); opacity: 1; text-shadow: 0 1px 3px rgba(10, 8, 6, .5), 0 0 16px rgba(255, 238, 220, .6), 0 0 32px rgba(255, 200, 170, .35); }
+}
 @keyframes nos {
   0%, 100% { transform: translateY(0); opacity: .82; text-shadow: 0 1px 14px rgba(10, 8, 6, .55); }
   50% { transform: translateY(-7px); opacity: 1; text-shadow: 0 1px 14px rgba(10, 8, 6, .4), 0 0 18px rgba(255, 238, 220, .75), 0 0 36px rgba(255, 200, 170, .45); }
 }
+.band { --cx: 0; --cy: 940; --cw: 1717; --ch: 1100; }
+/* NOSOTROS lives in an unmasked twin of the photo box, so the photo's fade never thins it */
+.band .over { position: absolute; z-index: 3; top: 0; left: 0; right: 0; aspect-ratio: var(--cw) / var(--ch); pointer-events: none; }
 .photo {
-  --cx: 0; --cy: 940; --cw: 1717; --ch: 1100;
   position: relative; width: 100%; aspect-ratio: 1717 / 1100; overflow: hidden;
   -webkit-mask-image: linear-gradient(transparent 0, #000 12%, #000 84%, transparent 100%); mask-image: linear-gradient(transparent 0, #000 12%, #000 84%, transparent 100%);
 }
@@ -280,6 +288,10 @@ h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
   .mark { width: 34px; }
   .meaning { padding-block: 2svh 26svh; }
   .quote .frame { max-width: 15ch; }
+  .quote .q.open { left: -.22em; }
+  /* Italiana has a single hairline weight: a soft stroke and a darker halo keep NOSOTROS legible on the grass */
+  .band h2 { font-size: 1.6rem; letter-spacing: .36em; text-indent: .36em; }
+  .band h2 .l { -webkit-text-stroke: .7px currentColor; paint-order: stroke fill; animation-name: nos-m; }
   .hero .meadow img { object-position: 22% 55%; }
   .hero .genre { letter-spacing: .2em; }
   .ep .shot { aspect-ratio: 4 / 5; }
@@ -287,7 +299,9 @@ h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
   .ep .copy { position: static; padding: 8px var(--pad-r) 72px var(--pad-l); }
   .song.right { justify-items: start; text-align: left; }
   .song.right .meta { justify-content: flex-start; }
-  .photo { --cx: 180; --cy: 960; --cw: 1350; --ch: 1020; aspect-ratio: 1350 / 1020; }
+  .band { --cx: 180; --cy: 960; --cw: 1350; --ch: 1020; z-index: 2; }
+  .s3 { --down: -26svh; } /* on a short photo the frost seam would blur NOSOTROS; end it above the picture */
+  .photo { aspect-ratio: 1350 / 1020; -webkit-mask-image: linear-gradient(transparent 0, #000 30%, #000 84%, transparent 100%); mask-image: linear-gradient(transparent 0, #000 30%, #000 84%, transparent 100%); }
   .who .n { font-size: 1rem; }
   .who .r { display: none; }
 }
@@ -325,8 +339,7 @@ h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
     <blockquote class="quote">
       <div class="frame">
         <span class="q open" aria-hidden="true">“</span>
-        <p id="quote-words">Un evento inalterable destinado a suceder, que marca <em>un antes y un después</em> en la historia</p>
-        <span class="q close" aria-hidden="true">”</span>
+        <p id="quote-words">Un evento inalterable destinado a suceder, que marca <em>un antes y un después</em> en la <span class="tail">historia<span class="q close" aria-hidden="true">”</span></span></p>
       </div>
     </blockquote>
     <p class="why rise" style="--d:300ms">es como nos gustó definir la manera loca en la que coincidimos para iniciar este proyecto musical.</p>
@@ -374,7 +387,6 @@ h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
 
   <section class="band" id="banda" data-palette="band" aria-labelledby="banda-t">
     <div class="photo">
-      <h2 id="banda-t" aria-label="Nosotros"><span aria-hidden="true" data-letters>NOSOTROS</span></h2>
       <picture>
         <source media="(max-width: 760px)" srcset="img/banda-movil.jpg" width="1350" height="1020">
         <img src="img/banda.jpg" alt="Los cinco integrantes de Fue Canónico sentados en el pasto" width="1717" height="1100" loading="lazy">
@@ -393,6 +405,7 @@ h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
         <li class="who" style="--x:1252;--y:1415"><button type="button"><span class="n">Renzo</span><span class="r">Bajo</span></button></li>
       </ul>
     </div>
+    <div class="over"><h2 id="banda-t" aria-label="Nosotros"><span aria-hidden="true" data-letters>NOSOTROS</span></h2></div>
   </section>
 
   <section class="contact wrap" id="contacto" data-palette="hero-dim" aria-labelledby="contacto-t">
