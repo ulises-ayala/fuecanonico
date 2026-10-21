@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fue Canónico</title>
+<meta name="description" content="Fue Canónico, dream pop, shoegaze y midwest emo desde Resistencia, Chaco.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Pinyon+Script&family=Hanken+Grotesk:wght@300;400;500&family=Comfortaa:wght@300&family=Unbounded:wght@300&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Del día a la noche: a windy meadow at the top, a dark stage with glowing flowers, the songs in the night field,
+   the five of them on the grass with flowers passing in front, and the night flower to close.
+   One fixed field of slow smoke and flowers sits behind every dark section; the photo sections fade into it. */
+:root {
+  color-scheme: dark;
+  --night: #07060a;
+  --cream: #fbecd8;      /* the logo's cream */
+  --pearl: #f4eee8;
+  --mist: #dcd3cb;
+  --coral: #f08a6a;      /* "en grabación", the poppies in the meadow */
+  --rose: #e88aa8;
+
+  --display: "Italiana", "Didot", "Bodoni 72", Georgia, serif;
+  --script: "Pinyon Script", "Snell Roundhand", cursive;
+  --text: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+
+  --step-label: 0.8125rem;
+  --step-body: clamp(1rem, .96rem + .2vw, 1.125rem);
+  --step-lead: clamp(1.6rem, 1.1rem + 2vw, 3rem);
+  --step-title: clamp(3rem, 1.2rem + 6.4vw, 6rem);
+
+  --pad-l: max(22px, env(safe-area-inset-left, 0px));
+  --pad-r: max(22px, env(safe-area-inset-right, 0px));
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --slow: 1.6s;
+}
+html { background: var(--night); scroll-behavior: smooth; scrollbar-color: #3a3340 var(--night); }
+body { position: relative; z-index: 0; background: var(--night); color: var(--pearl); font-family: var(--text); font-size: var(--step-body); line-height: 1.65; font-weight: 300; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+* { box-sizing: border-box; }
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+h1, h2, h3, p, figure { margin: 0; }
+h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
+:focus-visible { outline: 1px solid var(--pearl); outline-offset: 6px; border-radius: 999px; }
+::selection { background: var(--coral); color: var(--night); }
+.wrap { padding-left: var(--pad-l); padding-right: var(--pad-r); }
+
+#field { position: fixed; inset: -4%; width: 108%; height: 108%; z-index: -2; display: block; filter: blur(14px) saturate(1.1); }
+.grain {
+  position: fixed; inset: -50%; z-index: 30; pointer-events: none; opacity: .14; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: grain 1s steps(5) infinite;
+}
+@keyframes grain { 0%{transform:translate(0,0)} 25%{transform:translate(-4%,3%)} 50%{transform:translate(3%,-2%)} 75%{transform:translate(-2%,-4%)} 100%{transform:translate(0,0)} }
+
+.label { font-size: var(--step-label); font-weight: 500; letter-spacing: .16em; text-transform: uppercase; line-height: 1.5; }
+.script { font-family: var(--script); font-weight: 400; }
+.thin { text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat; padding-bottom: 3px; transition: background-size .8s var(--ease); }
+.thin:hover { background-size: 0 1px; background-position: 100% 100%; }
+
+
+/* ---------- seams: soft blur and drifting light across each change of scene ---------- */
+.seam { position: relative; height: 0; z-index: 6; pointer-events: none; }
+.seam .in { position: absolute; left: 0; right: 0; top: calc(var(--up) * -1); height: calc(var(--up) + var(--down)); }
+.seam .frost { position: absolute; inset: 0; -webkit-backdrop-filter: blur(26px) saturate(1.1); backdrop-filter: blur(26px) saturate(1.1);
+  -webkit-mask-image: linear-gradient(transparent, #000 38%, #000 62%, transparent); mask-image: linear-gradient(transparent, #000 38%, #000 62%, transparent); }
+.orb { position: absolute; width: var(--s); aspect-ratio: 1; border-radius: 50%; background: var(--c); filter: blur(var(--bl, 48px)); opacity: var(--o, .5);
+  left: var(--x); top: var(--y); animation: orb var(--t, 18s) ease-in-out var(--dl, 0s) infinite alternate; }
+@keyframes orb { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(calc(-50% + var(--dx, 6vw)), calc(-50% + var(--dy, -3vh))) scale(1.15); } }
+.seam .fl { position: absolute; left: var(--x); top: var(--y); width: var(--s); transform: translate(-50%, -50%); opacity: var(--o, .6); animation: orb var(--t, 22s) ease-in-out infinite alternate; }
+.seam .fl img { width: 100%; height: auto; filter: blur(var(--bl, 10px)); }
+.s1 { --up: 30svh; --down: 0svh; }
+.s3 { --up: 46svh; --down: -8svh; }
+
+/* the cursor's colours over the songs */
+.songs .liquid #paint { filter: blur(14px) saturate(1.2); opacity: .95; }
+
+/* the personitas, always in the top-left corner */
+.corner {
+  position: fixed; z-index: 20; top: 0; left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: calc(18px + env(safe-area-inset-top, 0px)) var(--pad-r) 0 var(--pad-l);
+  pointer-events: none; mix-blend-mode: difference; color: #fff;
+}
+.corner a { pointer-events: auto; }
+.mark { display: block; width: 40px; }
+.mark img { width: 100%; height: auto; transform: rotate(var(--r, 0deg)); transition: transform 1.4s var(--ease); }
+.corner nav { display: flex; gap: clamp(18px, 3vw, 44px); }
+.corner nav a { text-decoration: none; opacity: .85; transition: opacity .6s; }
+.corner nav a:hover { opacity: 1; }
+
+/* ---------- 1 · the meadow ---------- */
+.hero { position: relative; display: grid; grid-template-rows: 100svh auto; overflow: hidden; isolation: isolate; }
+.hero .meadow {
+  position: absolute; inset: 0; z-index: -1; overflow: hidden;
+  -webkit-mask-image: linear-gradient(#000 0 74%, transparent 100%); mask-image: linear-gradient(#000 0 74%, transparent 100%);
+}
+.hero .meadow img { width: 100%; height: 100%; object-fit: cover; object-position: 30% 60%; transform-origin: 40% 70%; animation: wind 16s ease-in-out infinite alternate; will-change: transform; }
+@keyframes wind { 0% { transform: scale(1.08) translate(0, 0) skewX(0deg); } 50% { transform: scale(1.12) translate(-1.5%, -1%) skewX(-1.2deg); } 100% { transform: scale(1.1) translate(1%, -2%) skewX(.8deg); } }
+.hero .lockup { align-self: center; justify-self: center; display: grid; justify-items: center; gap: clamp(14px, 2vw, 26px); text-align: center; margin-top: -4svh; will-change: transform, opacity, filter; }
+.hero h1 { width: min(760px, 84vw); }
+.hero h1 .lean { display: block; will-change: transform; }
+.hero h1 img { width: 100%; height: auto; animation: float 11s cubic-bezier(.45, .05, .55, .95) infinite; will-change: transform; }
+@keyframes float {
+  0%   { transform: translate(0, 0) rotate(-.8deg); }
+  20%  { transform: translate(.9%, -3.2%) rotate(.2deg); }
+  45%  { transform: translate(-.3%, -5.6%) rotate(.9deg); }
+  70%  { transform: translate(-1.1%, -2.6%) rotate(.1deg); }
+  100% { transform: translate(0, 0) rotate(-.8deg); }
+}
+.hero .genre { color: var(--cream); font-size: clamp(.9rem, .75rem + .5vw, 1.2rem); letter-spacing: .28em; text-shadow: 0 1px 14px rgba(20, 40, 50, .55), 0 0 2px rgba(20, 40, 50, .35);
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .2em .9em; }
+.hero .genre .sep { opacity: .7; }
+.g { display: inline-grid; place-items: center; cursor: default; outline: none; padding: .5em .2em; margin: -.5em -.2em; }
+.g > span { grid-area: 1 / 1; white-space: nowrap; }
+.g .alt { pointer-events: none; text-transform: none; letter-spacing: 0; }
+.g .ch { display: inline-block; transition: opacity .75s var(--ease), filter .75s var(--ease), transform .9s var(--ease); }
+.g .ch i { display: inline-block; font-style: normal; }
+/* at rest: the label is there, the other lettering waits scattered below, out of focus */
+.g .base .ch { transition-delay: calc(var(--i) * 38ms + 160ms); }
+.g .alt .ch { opacity: 0; filter: blur(9px); transform: translateY(.55em) rotate(var(--r)) scale(.8); transition-delay: calc(var(--i) * 26ms); }
+/* on hover: each letter of the label lifts and dissolves, a beat later the new letters gather in, one by one */
+.g:hover .base .ch, .g:focus-visible .base .ch, .g.on .base .ch { opacity: 0; filter: blur(7px); transform: translateY(-.5em) rotate(calc(var(--r) * -.6)) scale(1.08); transition-delay: calc(var(--i) * 38ms); }
+.g:hover .alt .ch, .g:focus-visible .alt .ch, .g.on .alt .ch { opacity: 1; filter: blur(0); transform: none; transition-delay: calc(var(--i) * 48ms + 170ms); }
+.g:focus-visible { outline: 1px solid var(--cream); outline-offset: 2px; border-radius: 6px; }
+/* dream pop: soft, round, cloudy, the letters drifting like breath */
+.g.dream .alt { font-family: "Comfortaa", var(--text); font-weight: 300; font-size: 1.45em; letter-spacing: .06em; color: #fff7f1;
+  text-shadow: 0 0 10px rgba(255, 255, 255, .9), 0 0 26px rgba(255, 214, 230, .85), 0 0 48px rgba(190, 215, 255, .7); }
+.g.dream .alt i { animation: cloud 3.6s ease-in-out calc(var(--i) * -.28s) infinite alternate; }
+@keyframes cloud { from { transform: translateY(0); filter: blur(0); } to { transform: translateY(-5px); filter: blur(.6px); } }
+/* shoegaze: wide, fuzzy, smeared, a wall of sound */
+.g.shoe .alt { font-family: "Unbounded", var(--text); font-weight: 300; font-size: 1.12em; letter-spacing: .18em; text-transform: lowercase; color: #fdeee4;
+  filter: blur(.5px); animation: smear 2.8s ease-in-out infinite alternate; }
+@keyframes smear {
+  from { text-shadow: 6px 0 4px rgba(255, 170, 190, .55), -6px 0 4px rgba(160, 200, 255, .55), 14px 0 12px rgba(255, 255, 255, .3); transform: skewX(-4deg); }
+  to   { text-shadow: -8px 0 6px rgba(255, 170, 190, .5), 8px 0 6px rgba(160, 200, 255, .55), -16px 0 14px rgba(255, 255, 255, .28); transform: skewX(3deg); }
+}
+/* midwest emo: handwritten, lowercase, a little crooked, like a notebook */
+.g.emo .alt { justify-self: start; transform-origin: 0 60%; font-family: "Caveat", var(--text); font-weight: 500; font-size: 2em; color: #fffaf2; transform: rotate(-3deg);
+  text-shadow: 0 1px 10px rgba(20, 40, 50, .55); }
+.g.emo:hover .alt, .g.emo:focus-visible .alt, .g.emo.on .alt { animation: scribble 1.6s steps(2) .9s infinite; }
+@keyframes scribble { 0% { transform: rotate(-3deg) translate(0, 0); } 50% { transform: rotate(-2deg) translate(1px, -1px); } 100% { transform: rotate(-3.5deg) translate(-1px, 0); } }
+
+
+/* ---------- what "fue canónico" means, lower on the meadow ---------- */
+.meaning { display: grid; justify-items: center; text-align: center; gap: 18px; padding-block: 4svh 30svh; color: var(--cream); }
+.meaning h2 { font-family: var(--script); font-size: clamp(2rem, 1.3rem + 2.2vw, 3.4rem); line-height: 1; color: #fff3e6; text-shadow: 0 2px 22px rgba(20, 30, 40, .5), 0 0 16px rgba(255, 238, 222, .6), 0 0 36px rgba(255, 200, 175, .35); }
+.quote { margin: 0; width: 100%; }
+.quote .frame { position: relative; max-width: 21ch; margin-inline: auto; font-family: var(--display); font-size: clamp(1.9rem, 1rem + 2.9vw, 3.7rem); }
+.quote .q { position: absolute; font-family: var(--script); font-size: 2.3em; line-height: 1; color: #f6b49a; opacity: .9; pointer-events: none;
+  text-shadow: 0 2px 30px rgba(20, 30, 40, .35); animation: drift-q 9s ease-in-out infinite alternate; }
+.quote .q.open { left: -.42em; top: -.3em; }
+.quote .q.close { right: -.38em; bottom: -.72em; animation-delay: -4.5s; }
+@keyframes drift-q { from { transform: translate(0, 0) rotate(-4deg); } to { transform: translate(4px, -10px) rotate(3deg); } }
+.quote p { font-size: 1em; line-height: 1.14; letter-spacing: .005em; color: #fff8f0; text-wrap: balance;
+  text-shadow: 0 2px 26px rgba(15, 25, 35, .5), 0 0 2px rgba(15, 25, 35, .25), 0 0 14px rgba(255, 240, 225, .55), 0 0 34px rgba(255, 205, 180, .35);
+  animation: glow-q 6s ease-in-out infinite alternate; }
+@keyframes glow-q {
+  from { text-shadow: 0 2px 26px rgba(15, 25, 35, .5), 0 0 2px rgba(15, 25, 35, .25), 0 0 12px rgba(255, 240, 225, .45), 0 0 28px rgba(255, 205, 180, .25); }
+  to   { text-shadow: 0 2px 26px rgba(15, 25, 35, .5), 0 0 2px rgba(15, 25, 35, .25), 0 0 20px rgba(255, 244, 232, .8), 0 0 48px rgba(255, 205, 180, .5); }
+}
+.quote p em { font-family: var(--script); font-style: normal; font-size: 1.25em; line-height: .8; color: #ffd0bd; }
+.meaning .why { max-width: 40ch; font-size: clamp(1rem, .95rem + .3vw, 1.2rem); line-height: 1.6; color: #f7f0e8; text-shadow: 0 1px 16px rgba(15, 25, 35, .6), 0 0 12px rgba(255, 240, 225, .35); margin-top: 26px; }
+/* the quote arrives word by word, out of a blur */
+.js .quote p .w { display: inline-block; opacity: 0; filter: blur(10px); transform: translateY(.35em); transition: opacity 1.3s var(--ease), filter 1.3s var(--ease), transform 1.3s var(--ease); transition-delay: calc(var(--i) * 70ms); }
+.js .quote p.in .w { opacity: 1; filter: blur(0); transform: none; }
+
+/* ---------- 2 · the EP: the band's own composite, text on its dark half ---------- */
+.ep { position: relative; background: #000; }
+.ep .shot { position: relative; width: 100%; aspect-ratio: 2880 / 1128; overflow: hidden;
+  -webkit-mask-image: linear-gradient(transparent 0, #000 16%, #000 84%, transparent 100%); mask-image: linear-gradient(transparent 0, #000 16%, #000 84%, transparent 100%); }
+.ep .shot img { width: 100%; height: 100%; object-fit: cover; object-position: 0% 50%; animation: breathe 14s ease-in-out infinite alternate; transform-origin: 20% 60%; }
+@keyframes breathe { from { transform: scale(1); filter: brightness(1); } to { transform: scale(1.035); filter: brightness(1.08); } }
+.ep .copy { position: absolute; inset: 0 0 0 52%; display: grid; place-content: center; justify-items: center; text-align: center; gap: 6px; padding-right: var(--pad-r); }
+.ep h2 { font-size: clamp(3rem, 1.2rem + 4.6vw, 6.2rem); line-height: 1; color: var(--cream); }
+.ep .script { font-size: clamp(2.4rem, 1.2rem + 3.6vw, 4.8rem); line-height: 1; color: var(--coral); }
+.ep p.note { margin-top: 18px; max-width: 32ch; color: var(--mist); }
+
+/* ---------- 3 · songs, on a moving liquid: blue/violet at Flor en el Mar, orange/yellow at La Pared ---------- */
+.songs { position: relative; z-index: 1; isolation: isolate; overflow: hidden; padding-block: 22svh 34svh; }
+.songs .liquid { position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  -webkit-mask-image: linear-gradient(transparent 0, #000 7svh, #000 calc(100% - 30svh), transparent 100%); mask-image: linear-gradient(transparent 0, #000 7svh, #000 calc(100% - 30svh), transparent 100%); }
+.songs .liquid canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+.songs .song { position: relative; z-index: 1; }
+.song.flor { color: #fbf3ea; }
+.song.flor h3, .song.flor .about { text-shadow: 0 2px 24px rgba(30, 20, 80, .35); }
+.song.flor .meta { color: #efe6ff; }
+.song.right { color: #2a1a12; }
+.song.right .meta { color: #4a2c1c; }
+.song { min-height: 64svh; display: grid; align-content: center; gap: 22px; padding-block: 40px; }
+.song h3 { font-size: clamp(3.4rem, 1rem + 9vw, 9.5rem); line-height: .92; letter-spacing: -0.01em; }
+.song .meta { display: flex; gap: 12px 28px; flex-wrap: wrap; align-items: center; }
+.song p.about { max-width: 34ch; font-size: clamp(1.15rem, 1rem + .6vw, 1.5rem); line-height: 1.45; }
+.song.right { justify-items: end; text-align: right; }
+.song.right .meta { justify-content: flex-end; }
+.songs ::selection { background: #2a1a12; color: #fbecd8; }
+
+/* ---------- 4 · the five of them ---------- */
+.band { position: relative; z-index: 0; isolation: isolate; margin-top: -24svh; }
+.band h2 { position: absolute; z-index: 3; left: 0; right: 0; top: calc((1105 - var(--cy)) / var(--ch) * 100%); transform: translateY(-50%); text-align: center;
+  font-family: var(--display); font-size: clamp(1.3rem, .9rem + 1.3vw, 2.2rem); letter-spacing: .5em; text-indent: .5em; text-transform: uppercase; color: var(--cream); white-space: nowrap; }
+.band h2 .l { display: inline-block; text-shadow: 0 1px 14px rgba(10, 8, 6, .55);
+  animation: nos 4.8s ease-in-out calc(var(--i) * .22s) infinite; }
+@keyframes nos {
+  0%, 100% { transform: translateY(0); opacity: .82; text-shadow: 0 1px 14px rgba(10, 8, 6, .55); }
+  50% { transform: translateY(-7px); opacity: 1; text-shadow: 0 1px 14px rgba(10, 8, 6, .4), 0 0 18px rgba(255, 238, 220, .75), 0 0 36px rgba(255, 200, 170, .45); }
+}
+.photo {
+  --cx: 0; --cy: 940; --cw: 1717; --ch: 1100;
+  position: relative; width: 100%; aspect-ratio: 1717 / 1100; overflow: hidden;
+  -webkit-mask-image: linear-gradient(transparent 0, #000 12%, #000 84%, transparent 100%); mask-image: linear-gradient(transparent 0, #000 12%, #000 84%, transparent 100%);
+}
+.photo > picture img { width: 100%; height: 100%; object-fit: cover; filter: sepia(.18) saturate(1.05) contrast(.97) brightness(.98); }
+.petals { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.petal { position: absolute; will-change: transform; }
+.petal img { width: 100%; height: auto; filter: blur(var(--b)) saturate(1.3) hue-rotate(var(--h, 0deg)); }
+.petal.p1 { width: 32%; left: -4%; top: 9%; --b: 12px; --h: -18deg; opacity: .8; animation: drift1 22s ease-in-out infinite alternate; }
+.petal.p2 { width: 22%; left: 24%; top: 5%; --b: 16px; opacity: .6; animation: drift2 26s ease-in-out infinite alternate; }
+.petal.p3 { width: 34%; left: 64%; top: 6%; --b: 10px; --h: -25deg; opacity: .75; animation: drift1 24s ease-in-out -8s infinite alternate; }
+.petal.p4 { width: 16%; left: 82%; top: 30%; --b: 14px; opacity: .55; animation: drift2 20s ease-in-out -4s infinite alternate; }
+@keyframes drift1 { from { transform: translate(0, 0) rotate(-6deg); } to { transform: translate(4%, 6%) rotate(8deg); } }
+@keyframes drift2 { from { transform: translate(0, 0) rotate(5deg) scale(1); } to { transform: translate(-5%, 4%) rotate(-6deg) scale(1.06); } }
+.who { position: absolute; z-index: 2; left: calc((var(--x) - var(--cx)) / var(--cw) * 100%); top: calc((var(--y) - var(--cy)) / var(--ch) * 100%); transform: translate(-50%, -100%); }
+.who button { all: unset; cursor: default; display: grid; justify-items: center; text-align: center; }
+.who .n { font-family: var(--display); font-size: clamp(1.05rem, .7rem + 1vw, 1.7rem); line-height: 1; color: var(--cream); text-shadow: 0 1px 10px rgba(10, 8, 6, .65); transition: transform .8s var(--ease); }
+.who .r { font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 500; color: var(--cream); text-shadow: 0 1px 8px rgba(10, 8, 6, .8); white-space: nowrap; margin-top: 4px; opacity: 0; transform: translateY(-4px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.who:hover .r, .who:focus-within .r, .who.open .r { opacity: 1; transform: none; }
+.who:hover .n, .who:focus-within .n, .who.open .n { transform: translateY(-3px); }
+.who button:focus-visible { outline: 1px solid var(--cream); outline-offset: 6px; border-radius: 6px; }
+.band { padding-bottom: clamp(80px, 10vw, 140px); }
+
+/* ---------- 5 · contact, the night with the flower ---------- */
+.contact { min-height: 100svh; display: grid; grid-template-rows: 1fr auto; padding-block: 120px 26px; }
+.contact .mid { align-self: center; justify-self: center; width: min(1240px, 100%); display: grid; justify-items: center; gap: clamp(36px, 6vw, 80px); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.emblem-btn { all: unset; cursor: pointer; display: block; width: clamp(150px, 16vw, 250px); aspect-ratio: 529 / 791; animation: emblem 12s cubic-bezier(.45, .05, .55, .95) infinite; -webkit-tap-highlight-color: transparent; }
+.emblem-btn:focus-visible { outline: 1px solid var(--pearl); outline-offset: 12px; border-radius: 20px; }
+/* the personitas in white, with an orange copy on top that fades in now and then */
+.emblem { position: relative; display: block; width: 100%; height: 100%; }
+.emblem img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.emblem .w { filter: drop-shadow(0 0 26px rgba(255, 240, 225, .2)); }
+.emblem .o { opacity: 0; filter: drop-shadow(0 0 30px rgba(240, 132, 63, .55)); animation: tint 9s ease-in-out 2s infinite; }
+@keyframes tint { 0%, 62%, 100% { opacity: 0; } 72%, 82% { opacity: 1; } }
+/* a click turns them orange straight away */
+.emblem.flash .o { animation: flash 1.6s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes flash { 0% { opacity: 0; } 14%, 52% { opacity: 1; } 100% { opacity: 0; } }
+
+/* ---------- the loading screen ---------- */
+#loader { position: fixed; inset: 0; z-index: 100; display: none; place-items: center; background: #07060a;
+  transition: opacity 1.2s cubic-bezier(.22, 1, .36, 1), filter 1.2s cubic-bezier(.22, 1, .36, 1), transform 1.4s cubic-bezier(.22, 1, .36, 1); }
+.js #loader { display: grid; }
+#loader img { width: clamp(70px, 8vw, 104px); height: auto; animation: load-spin 7s linear infinite, load-breathe 2.6s ease-in-out infinite alternate; }
+@keyframes load-spin { to { rotate: 360deg; } }
+@keyframes load-breathe { from { transform: scale(.94); filter: drop-shadow(0 0 6px rgba(255, 240, 225, .25)); opacity: .75; } to { transform: scale(1.04); filter: drop-shadow(0 0 22px rgba(255, 220, 200, .65)); opacity: 1; } }
+#loader.out { opacity: 0; filter: blur(14px); transform: scale(1.05); pointer-events: none; }
+/* until the first screen is ready, everything waits behind the loader and then arrives together */
+.js:not(.ready) .rise, .js:not(.ready) .title-in { opacity: 0 !important; filter: blur(10px) !important; transform: translateY(14px) !important; }
+.hero .meadow { transition: opacity 1.8s cubic-bezier(.22, 1, .36, 1), filter 1.8s cubic-bezier(.22, 1, .36, 1); }
+.js:not(.ready) .hero .meadow { opacity: 0; filter: blur(24px); }
+@keyframes emblem { 0% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-14px) rotate(4deg); } 100% { transform: translateY(0) rotate(-4deg); } }
+.socials { list-style: none; margin: 0; padding: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; }
+.socials a { display: grid; justify-items: center; gap: 12px; color: var(--pearl); text-decoration: none; padding: 10px; }
+.socials svg { width: clamp(34px, 3.4vw, 48px); height: auto; fill: currentColor; transition: transform .9s var(--ease), filter .9s var(--ease); }
+.socials span { font-size: var(--step-label); font-weight: 500; letter-spacing: .16em; text-transform: uppercase; opacity: .55; transform: translateY(-4px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+.socials a:hover svg, .socials a:focus-visible svg { transform: translateY(-6px) scale(1.12); filter: drop-shadow(0 0 16px rgba(255, 240, 225, .55)); }
+.socials a:hover span, .socials a:focus-visible span { opacity: 1; transform: none; }
+.socials a:focus-visible { outline: 1px solid var(--pearl); outline-offset: 4px; border-radius: 12px; }
+.contact footer { display: flex; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; color: var(--mist); }
+.days-n, .clock { font-variant-numeric: tabular-nums; }
+
+/* ---------- soft motion: visible by default ---------- */
+.js .rise { opacity: 0; transform: translateY(14px); filter: blur(10px); }
+.js .rise.in { opacity: 1; transform: none; filter: blur(0); transition: opacity var(--slow) var(--ease), transform var(--slow) var(--ease), filter var(--slow) var(--ease); transition-delay: var(--d, 0ms); }
+.js .title-in { opacity: 0; letter-spacing: .06em; filter: blur(14px); }
+.js .title-in.in { opacity: 1; letter-spacing: -0.01em; filter: blur(0); transition: opacity 2.2s var(--ease), letter-spacing 2.6s var(--ease), filter 2.2s var(--ease); transition-delay: var(--d, 0ms); }
+
+@media (max-width: 760px) {
+  .corner nav a:not(.keep) { display: none; }
+  .mark { width: 34px; }
+  .meaning { padding-block: 2svh 26svh; }
+  .quote .frame { max-width: 15ch; }
+  .hero .meadow img { object-position: 22% 55%; }
+  .hero .genre { letter-spacing: .2em; }
+  .ep .shot { aspect-ratio: 4 / 5; }
+  .ep .shot img { object-position: 12% 50%; }
+  .ep .copy { position: static; padding: 8px var(--pad-r) 72px var(--pad-l); }
+  .song.right { justify-items: start; text-align: left; }
+  .song.right .meta { justify-content: flex-start; }
+  .photo { --cx: 180; --cy: 960; --cw: 1350; --ch: 1020; aspect-ratio: 1350 / 1020; }
+  .who .n { font-size: 1rem; }
+  .who .r { display: none; }
+}
+</style>
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<div id="loader" role="status" aria-label="Cargando"><img src="img/personitas.png" alt="" width="529" height="791"></div>
+<canvas id="field" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="corner">
+  <a class="mark" href="#inicio" aria-label="Fue Canónico, volver al inicio"><img id="mark" src="img/personitas.png" alt="" width="529" height="791"></a>
+  <nav class="label" aria-label="Principal">
+    <a href="#canciones">Canciones</a>
+    <a href="#banda">Banda</a>
+    <a class="keep" href="#contacto">Contacto</a>
+  </nav>
+</div>
+
+<header class="hero" id="inicio" data-palette="hero">
+  <div class="meadow" aria-hidden="true"><img id="meadow" src="img/campo.jpg" alt="" width="2167" height="2200"></div>
+  <div class="lockup" id="lockup">
+    <h1 class="rise"><span class="lean" id="lean"><img src="img/logo.webp" alt="Fue Canónico" width="1500" height="712"></span></h1>
+    <p class="genre label rise" style="--d:300ms">
+      <span class="g dream" tabindex="0" aria-label="Dream pop"><span class="base" aria-hidden="true" data-split>Dream pop</span><span class="alt" aria-hidden="true" data-split>dream pop</span></span>
+      <span class="sep" aria-hidden="true">/</span>
+      <span class="g shoe" tabindex="0" aria-label="Shoegaze"><span class="base" aria-hidden="true" data-split>Shoegaze</span><span class="alt" aria-hidden="true" data-split>shoegaze</span></span>
+      <span class="sep" aria-hidden="true">/</span>
+      <span class="g emo" tabindex="0" aria-label="Midwest emo"><span class="base" aria-hidden="true" data-split>Midwest emo</span><span class="alt" aria-hidden="true" data-split>midwest emo</span></span>
+    </p>
+  </div>
+  <div class="meaning wrap">
+    <h2 class="rise">fue canónico</h2>
+    <blockquote class="quote">
+      <div class="frame">
+        <span class="q open" aria-hidden="true">“</span>
+        <p id="quote-words">Un evento inalterable destinado a suceder, que marca <em>un antes y un después</em> en la historia</p>
+        <span class="q close" aria-hidden="true">”</span>
+      </div>
+    </blockquote>
+    <p class="why rise" style="--d:300ms">es como nos gustó definir la manera loca en la que coincidimos para iniciar este proyecto musical.</p>
+  </div>
+</header>
+
+<div class="seam s1" aria-hidden="true"><div class="in">
+  <div class="frost"></div>
+  <span class="orb" style="--s:34vw;--c:#7faf8c;--x:18%;--y:30%;--o:.3;--dx:8vw"></span>
+  <span class="orb" style="--s:28vw;--c:#9cc3e0;--x:72%;--y:28%;--o:.28;--t:22s;--dx:-6vw"></span>
+    </div></div>
+
+<main>
+  <section class="ep" data-palette="ep" aria-labelledby="ep-t">
+    <div class="shot"><img src="img/ep.jpg" alt="Greta tocando los teclados entre flores que brillan" width="2880" height="1128" loading="lazy"></div>
+    <div class="copy">
+      <h2 id="ep-t" class="title-in">Primer EP</h2>
+      <span class="script rise" style="--d:400ms">en grabación</span>
+      <p class="note rise" style="--d:600ms">Lleva el nombre de la banda. Llega cuando tenga que llegar.</p>
+    </div>
+  </section>
+
+  <section class="songs wrap" id="canciones" data-palette="songs" aria-label="Canciones">
+    <div class="liquid" aria-hidden="true"><canvas id="section-liquid-canvas"></canvas><canvas id="paint"></canvas></div>
+    <article class="song flor" aria-labelledby="flor-t">
+      <h3 id="flor-t" class="title-in">Flor en el Mar</h3>
+      <p class="about rise" style="--d:300ms">El no encajar.</p>
+      <div class="meta label rise" style="--d:450ms"><span>En vivo en Random Access</span><a class="thin" href="https://www.youtube.com/watch?v=pXU8fgkUWz8" target="_blank" rel="noopener">Ver en YouTube</a></div>
+    </article>
+    <article class="song right" aria-labelledby="pared-t">
+      <h3 id="pared-t" class="title-in">La Pared</h3>
+      <p class="about rise" style="--d:300ms">Lo que nos separa.</p>
+      <div class="meta label rise" style="--d:300ms"><span>En vivo en Centro Cultural Kandanga</span><a class="thin" href="https://www.youtube.com/watch?v=RXwkeE4y-hA" target="_blank" rel="noopener">Ver en YouTube</a></div>
+    </article>
+  </section>
+
+  <div class="seam s3" aria-hidden="true"><div class="in">
+    <div class="frost"></div>
+    <span class="orb" style="--s:36vw;--c:#ee8a6e;--x:20%;--y:40%;--o:.4;--dx:6vw"></span>
+    <span class="orb" style="--s:40vw;--c:#b8d77a;--x:66%;--y:58%;--o:.45;--t:23s;--dx:-7vw"></span>
+    <span class="orb" style="--s:24vw;--c:#e9a0b8;--x:44%;--y:30%;--o:.4;--t:18s;--dl:-5s"></span>
+    <span class="fl" style="--x:12%;--y:62%;--s:14vw;--o:.5;--bl:12px"><img src="img/flor-rosa.png" alt="" width="412" height="596" loading="lazy"></span>
+    <span class="fl" style="--x:86%;--y:36%;--s:15vw;--o:.45;--bl:14px;--t:25s"><img src="img/flor-luz.png" alt="" width="414" height="516" loading="lazy"></span>
+  </div></div>
+
+  <section class="band" id="banda" data-palette="band" aria-labelledby="banda-t">
+    <div class="photo">
+      <h2 id="banda-t" aria-label="Nosotros"><span aria-hidden="true" data-letters>NOSOTROS</span></h2>
+      <picture>
+        <source media="(max-width: 760px)" srcset="img/banda-movil.jpg" width="1350" height="1020">
+        <img src="img/banda.jpg" alt="Los cinco integrantes de Fue Canónico sentados en el pasto" width="1717" height="1100" loading="lazy">
+      </picture>
+      <div class="petals" aria-hidden="true">
+        <span class="petal p1"><img src="img/flor-rosa.png" alt="" width="412" height="596" loading="lazy"></span>
+        <span class="petal p2"><img src="img/flor-luz.png" alt="" width="414" height="516" loading="lazy"></span>
+        <span class="petal p3"><img src="img/flor-rosa.png" alt="" width="412" height="596" loading="lazy"></span>
+        <span class="petal p4"><img src="img/flor-luz.png" alt="" width="414" height="516" loading="lazy"></span>
+      </div>
+      <ul class="names" role="list" style="list-style:none;margin:0;padding:0">
+        <li class="who" style="--x:444;--y:1440"><button type="button"><span class="n">Dima</span><span class="r">Batería</span></button></li>
+        <li class="who" style="--x:657;--y:1395"><button type="button"><span class="n">Greta</span><span class="r">Teclados y sintes</span></button></li>
+        <li class="who" style="--x:856;--y:1330"><button type="button"><span class="n">Ulises</span><span class="r">Guitarra</span></button></li>
+        <li class="who" style="--x:1079;--y:1362"><button type="button"><span class="n">Barbara</span><span class="r">Voz y guitarra</span></button></li>
+        <li class="who" style="--x:1252;--y:1415"><button type="button"><span class="n">Renzo</span><span class="r">Bajo</span></button></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="contact wrap" id="contacto" data-palette="hero-dim" aria-labelledby="contacto-t">
+    <div class="mid">
+      <h2 id="contacto-t" class="sr-only">Contacto y redes</h2>
+      <button type="button" class="emblem-btn rise" id="emblem" aria-label="Las personitas, el logo de Fue Canónico"><span class="emblem" aria-hidden="true"><img class="w" src="img/personitas.png" alt="" width="529" height="791" loading="lazy"><img class="o" src="img/personitas-naranja.png" alt="" width="529" height="791" loading="lazy"></span></button>
+      <ul class="socials rise" style="--d:250ms">
+        <li><a href="https://www.instagram.com/fuecanonico" target="_blank" rel="noopener" aria-label="Instagram de Fue Canónico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg><span>Instagram</span></a></li>
+        <li><a href="https://www.tiktok.com/@fue.canonico" target="_blank" rel="noopener" aria-label="TikTok de Fue Canónico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg><span>TikTok</span></a></li>
+        <li><a href="https://youtube.com/@fuecanonico" target="_blank" rel="noopener" aria-label="YouTube de Fue Canónico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg><span>YouTube</span></a></li>
+      </ul>
+    </div>
+    <footer class="label">
+      <span>© 2026 Fue Canónico</span>
+      <span>Día <span class="days-n" data-days>—</span></span>
+      <span>Resistencia · <span class="clock" id="clock">--:--</span></span>
+    </footer>
+  </section>
+</main>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+  var reduce = false; // Keep animations enabled regardless of system motion preferences.
+
+  /* ---------- palettes for the night field: ground, three lights, strength ---------- */
+  var PAL = {
+    'hero':      ['#07060a', '#f08a6a', '#8fb4ea', '#9fc79a', .5],
+    'ep':        ['#000000', '#f0904a', '#e88aa8', '#f6d2a8', 0],
+    'songs':     ['#05070a', '#7fb0e0', '#f2b3c6', '#f0a050', .35],
+    'band':      ['#07090a', '#6f8a5a', '#f08a6a', '#c9b27a', .5],
+    'hero-dim':  ['#050507', '#e88aa8', '#8fb4ea', '#f0a050', .55]
+  };
+  function hex(h) { var n = parseInt(h.slice(1), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
+  function flat(p) { return hex(p[0]).concat(hex(p[1]), hex(p[2]), hex(p[3]), [p[4]]); }
+  var sections = Array.prototype.slice.call(document.querySelectorAll('[data-palette]'));
+  var targets = sections.map(function (s) { return flat(PAL[s.dataset.palette]); });
+  var cur = targets[0].slice();
+  function targetForScroll() {
+    var mid = innerHeight / 2, pos = 0;
+    for (var i = 0; i < sections.length; i++) {
+      var r = sections[i].getBoundingClientRect();
+      if (mid >= r.top && mid < r.bottom) { pos = i + (mid - r.top) / r.height - .5; break; }
+      if (i === sections.length - 1) pos = mid < sections[0].getBoundingClientRect().top ? 0 : sections.length - 1;
+    }
+    pos = Math.max(0, Math.min(sections.length - 1, pos));
+    var a = Math.floor(pos), b = Math.min(a + 1, sections.length - 1), f = pos - a;
+    f = f * f * (3 - 2 * f);
+    return targets[a].map(function (v, k) { return v + (targets[b][k] - v) * f; });
+  }
+
+  /* ---------- the night field: slow smoke and drifting out-of-focus flowers ---------- */
+  var canvas = document.getElementById('field');
+  var gl = canvas.getContext('webgl', { antialias: false });
+  var mouse = [.5, .55], mouseT = [.5, .55];
+  addEventListener('pointermove', function (e) { mouseT = [e.clientX / innerWidth, 1 - e.clientY / innerHeight]; }, { passive: true });
+  if (gl) {
+    var vs = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }';
+    var fs = [
+      'precision mediump float;',
+      'uniform vec2 uRes; uniform vec2 uMouse; uniform float uTime;',
+      'uniform vec3 uBg; uniform vec3 uA; uniform vec3 uB; uniform vec3 uC; uniform float uGain;',
+      'float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }',
+      'float noise(vec2 p){ vec2 i = floor(p), f = fract(p); vec2 u = f*f*(3.-2.*f);',
+      '  return mix(mix(hash(i), hash(i+vec2(1.,0.)), u.x), mix(hash(i+vec2(0.,1.)), hash(i+vec2(1.,1.)), u.x), u.y); }',
+      'float fbm(vec2 p){ float v = 0., a = .5; mat2 m = mat2(1.6, 1.2, -1.2, 1.6);',
+      '  for (int i = 0; i < 5; i++){ v += a * noise(p); p = m * p; a *= .5; } return v; }',
+      'float petal(vec2 d, float r, float rot, float n){ float a = atan(d.y, d.x) + rot; float lobe = pow(abs(cos(n * a * .5)), .45); float rr = r * (.55 + .45 * lobe); return 1. - smoothstep(rr * .05, rr * 1.35, length(d)); }',
+      'vec3 pick(float i){ float k = mod(i, 3.); return k < 1. ? uA : (k < 2. ? uB : uC); }',
+      'void main(){',
+      '  vec2 p = (gl_FragCoord.xy - .5 * uRes) / uRes.y;',
+      '  vec2 m = (uMouse - .5) * vec2(uRes.x / uRes.y, 1.);',
+      '  float t = uTime * .045;',
+      '  vec2 q = vec2(fbm(p * 1.3 + vec2(0., t)), fbm(p * 1.3 + vec2(5.2, -t)));',
+      '  vec2 r = vec2(fbm(p * 1.5 + 3. * q + vec2(1.7, 9.2) + .35 * m + t * .5), fbm(p * 1.5 + 3. * q + vec2(8.3, 2.8) - .25 * m));',
+      '  float f = fbm(p * 1.7 + 2.4 * r);',
+      '  vec3 col = mix(uA, uB, smoothstep(.38, .62, q.x));',
+      '  col = mix(col, uC, smoothstep(.5, .72, r.y));',
+      '  float d0 = length(p - m);',
+      '  float pool = exp(-d0 * d0 * 2.6);',
+      '  vec3 smoke = col * smoothstep(.42, .9, f) * (.35 + .4 * pool);',
+      '  vec2 pw = p + (q - .5) * .22;',
+      '  float T = uTime * .16;',
+      '  vec3 flw = vec3(0.); float glowc = 0.;',
+      '  for (int i = 0; i < 4; i++){',
+      '    float fi = float(i);',
+      '    vec2 c = vec2(sin(T * .55 + fi * 1.9) * .78 + .18 * sin(T * .37 + fi * 4.1), cos(T * .43 + fi * 2.7) * .45);',
+      '    c += (m - c) * .12 * (.4 + .6 * pool);',
+      '    float rad = .3 + .08 * sin(fi * 3.1 + T * .3);',
+      '    float rot = T * (mod(fi, 2.) < 1. ? .5 : -.4) + fi;',
+      '    flw += pick(fi) * petal(pw - c, rad, rot, mod(fi, 2.) < 1. ? 5. : 6.) * .42;',
+      '    glowc += (1. - smoothstep(0., rad * .35, length(pw - c))) * .35;',
+      '  }',
+      '  for (int j = 0; j < 7; j++){',
+      '    float fj = float(j);',
+      '    vec2 b = vec2(sin(T * .3 + fj * 2.3) * .9, sin(T * .25 + fj * 1.3 + 1.) * .5);',
+      '    float br = .05 + .04 * fract(fj * .37);',
+      '    flw += pick(fj + 1.) * (1. - smoothstep(br * .5, br, length(p - b))) * .18;',
+      '  }',
+      '  vec3 core = mix(uC, vec3(1., .58, .3), .55) * glowc;',
+      '  vec3 o = uBg + (smoke + flw + core * .6) * uGain;',
+      '  o = mix(uBg, o, smoothstep(1.45, .2, length(p * vec2(.75, 1.))));',
+      '  gl_FragColor = vec4(o, 1.);',
+      '}'
+    ].join('\n');
+    function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }
+    var prog = gl.createProgram();
+    gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) gl = null;
+  }
+  if (gl) {
+    gl.useProgram(prog);
+    var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    var loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    var U = {}; ['uRes', 'uMouse', 'uTime', 'uBg', 'uA', 'uB', 'uC', 'uGain'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+    var RES = .4;
+    function resize() { canvas.width = Math.round(innerWidth * RES); canvas.height = Math.round(innerHeight * RES); gl.viewport(0, 0, canvas.width, canvas.height); }
+    resize(); addEventListener('resize', resize);
+    function render(time) {
+      var tgt = targetForScroll(), k = reduce ? 1 : .035;
+      for (var i = 0; i < cur.length; i++) cur[i] += (tgt[i] - cur[i]) * k;
+      var mk = reduce ? 1 : .018;
+      mouse[0] += (mouseT[0] - mouse[0]) * mk; mouse[1] += (mouseT[1] - mouse[1]) * mk;
+      gl.uniform2f(U.uRes, canvas.width, canvas.height);
+      gl.uniform2f(U.uMouse, mouse[0], mouse[1]);
+      gl.uniform1f(U.uTime, reduce ? 40 : time / 1000 + 40);
+      gl.uniform3f(U.uBg, cur[0], cur[1], cur[2]); gl.uniform3f(U.uA, cur[3], cur[4], cur[5]);
+      gl.uniform3f(U.uB, cur[6], cur[7], cur[8]); gl.uniform3f(U.uC, cur[9], cur[10], cur[11]);
+      gl.uniform1f(U.uGain, cur[12]);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+    if (reduce) { render(0); addEventListener('scroll', function () { render(0); }, { passive: true }); }
+    else (function loop(t) { render(t); requestAnimationFrame(loop); })(0);
+  } else canvas.remove();
+
+
+  /* ---------- the songs' liquid (the band's shader): blue/violet at the top, orange/yellow by La Pared ---------- */
+  (function initSectionShader() {
+    var canvas = document.getElementById('section-liquid-canvas');
+    if (!canvas) return;
+    var gl = canvas.getContext('webgl', { alpha: false, antialias: false });
+    if (!gl) { canvas.parentElement.style.background = 'linear-gradient(#5a5fd8, #f29559)'; return; }
+    var CONFIG = {
+      speed: 0.9,
+      grain: 0.08,
+      top:    ['#4f5bd5', '#8a6fe0', '#a9c6f5', '#3a2f9e'],   // Flor en el Mar: royal blue, violet, sky, indigo
+      bottom: ['#e85d56', '#f29559', '#f9df99', '#d14338']    // La Pared: coral, peach, cream yellow, terracotta
+    };
+    function hexToRgb(hex) { var n = parseInt(hex.replace('#', ''), 16); return [(n >> 16) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255]; }
+    var vs = 'attribute vec2 a_position; varying vec2 v_uv; void main(){ v_uv = a_position * 0.5 + 0.5; gl_Position = vec4(a_position, 0.0, 1.0); }';
+    var fs = [
+      'precision highp float;',
+      'varying vec2 v_uv;',
+      'uniform float u_time; uniform vec2 u_resolution; uniform float u_grain; uniform vec2 u_mouse; uniform float u_split; uniform vec2 u_trail[4]; uniform float u_force;',
+      'uniform vec3 u_t1; uniform vec3 u_t2; uniform vec3 u_t3; uniform vec3 u_t4;',
+      'uniform vec3 u_b1; uniform vec3 u_b2; uniform vec3 u_b3; uniform vec3 u_b4;',
+      'vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}',
+      'vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}',
+      'float snoise(vec3 v){',
+      '  const vec2 C = vec2(1.0/6.0, 1.0/3.0); const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);',
+      '  vec3 i = floor(v + dot(v, C.yyy)); vec3 x0 = v - i + dot(i, C.xxx);',
+      '  vec3 g = step(x0.yzx, x0.xyz); vec3 l = 1.0 - g; vec3 i1 = min(g.xyz, l.zxy); vec3 i2 = max(g.xyz, l.zxy);',
+      '  vec3 x1 = x0 - i1 + 1.0 * C.xxx; vec3 x2 = x0 - i2 + 2.0 * C.xxx; vec3 x3 = x0 - 1.0 + 3.0 * C.xxx;',
+      '  i = mod(i, 289.0);',
+      '  vec4 p = permute(permute(permute(i.z + vec4(0.0, i1.z, i2.z, 1.0)) + i.y + vec4(0.0, i1.y, i2.y, 1.0)) + i.x + vec4(0.0, i1.x, i2.x, 1.0));',
+      '  float n_ = 1.0/7.0; vec3 ns = n_ * D.wyz - D.xzx;',
+      '  vec4 j = p - 49.0 * floor(p * ns.z * ns.z); vec4 x_ = floor(j * ns.z); vec4 y_ = floor(j - 7.0 * x_);',
+      '  vec4 x = x_ * ns.x + ns.yyyy; vec4 y = y_ * ns.x + ns.yyyy; vec4 h = 1.0 - abs(x) - abs(y);',
+      '  vec4 b0 = vec4(x.xy, y.xy); vec4 b1 = vec4(x.zw, y.zw);',
+      '  vec4 s0 = floor(b0)*2.0 + 1.0; vec4 s1 = floor(b1)*2.0 + 1.0; vec4 sh = -step(h, vec4(0.0));',
+      '  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy; vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;',
+      '  vec3 p0 = vec3(a0.xy,h.x); vec3 p1 = vec3(a0.zw,h.y); vec3 p2 = vec3(a1.xy,h.z); vec3 p3 = vec3(a1.zw,h.w);',
+      '  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));',
+      '  p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;',
+      '  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0); m = m * m;',
+      '  return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));',
+      '}',
+      'float hash12(vec2 p){ vec3 p3 = fract(vec3(p.xyx) * .1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }',
+      'void main(){',
+      '  vec2 uv = v_uv;',
+      '  float aspect = u_resolution.x / u_resolution.y;',
+      '  vec2 p = vec2(uv.x * aspect, uv.y) * 1.15 * max(1.0, 1.0 / aspect);',
+      '  float sc = 1.15 * max(1.0, 1.0 / aspect);',
+      /* the cursor as a current of warm air: a soft vortex and a slow wave over a wide, blurred area,
+         repeated along a trailing wake; the strength (u_force) grows with speed and fades like smoke */
+      '  float idle = 0.18;',
+      '  for (int i = 0; i < 4; i++) {',
+      '    float fi = float(i);',
+      '    vec2 c = vec2(u_trail[i].x * aspect, u_trail[i].y) * sc;',
+      '    vec2 d = p - c; float r2 = dot(d, d); float r = sqrt(r2) + 1e-4;',
+      '    float fall = exp(-r2 * (3.2 + fi * 1.4));',
+      '    float wght = 1.0 - fi * 0.2;',
+      '    float smoke = 0.55 + 0.45 * snoise(vec3(p * 1.6, u_time * 0.9 + fi * 3.7));',   /* degeneration: the wake frays as time moves */
+      '    float f = (idle + u_force) * fall * wght * smoke;',
+      '    float ang = f * 1.1;',
+      '    float cs = cos(ang), sn = sin(ang);',
+      '    p = c + mat2(cs, -sn, sn, cs) * d;',
+      '    p += (d / r) * sin(r * 8.0 - u_time * 2.6 - fi) * 0.035 * f;',
+      '  }',
+      '  p += vec2(u_time * 0.10, -u_time * 0.06) + 0.08 * vec2(sin(u_time * 0.7 + p.y * 2.0), cos(u_time * 0.5 + p.x * 2.0));',                         /* the cursor gently pulls the liquid */
+      '  float n1 = snoise(vec3(p * 0.85, u_time * 0.35));',
+      '  float n2 = snoise(vec3(p * 1.3 - vec2(n1 * 0.55), u_time * 0.45 + 10.0));',
+      '  float n3 = snoise(vec3(p * 0.65 + vec2(n2 * 0.45), u_time * 0.25 + 25.0));',
+      '  float b1 = smoothstep(-0.75, 0.75, n1); float b2 = smoothstep(-0.65, 0.75, n2); float b3 = smoothstep(-0.55, 0.85, n3);',
+      '  float o = smoothstep(u_split - 0.12, u_split + 0.12, 1.0 - uv.y + n1 * 0.06);',  /* blue/violet above, orange/yellow below */
+      '  vec3 c1 = mix(u_t1, u_b1, o), c2 = mix(u_t2, u_b2, o), c3 = mix(u_t3, u_b3, o), c4 = mix(u_t4, u_b4, o);',
+      '  vec3 col = mix(c1, c2, b1); col = mix(col, c3, b2 * 0.85); col = mix(col, c4, b3 * 0.55);',
+      '  col += (hash12(gl_FragCoord.xy + fract(u_time) * 100.0) - 0.5) * u_grain;',
+      '  gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);',
+      '}'
+    ].join('\n');
+    function compile(type, src) { var sh = gl.createShader(type); gl.shaderSource(sh, src); gl.compileShader(sh); return sh; }
+    var program = gl.createProgram();
+    gl.attachShader(program, compile(gl.VERTEX_SHADER, vs)); gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) { canvas.parentElement.style.background = 'linear-gradient(#5a5fd8, #f29559)'; return; }
+    gl.useProgram(program);
+    var buffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
+    var pos = gl.getAttribLocation(program, 'a_position'); gl.enableVertexAttribArray(pos); gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+    var U = {}; ['u_time', 'u_resolution', 'u_grain', 'u_mouse', 'u_split', 'u_trail', 'u_force'].forEach(function (n) { U[n] = gl.getUniformLocation(program, n); });
+    ['t1','t2','t3','t4'].forEach(function (n, i) { gl.uniform3fv(gl.getUniformLocation(program, 'u_' + n), hexToRgb(CONFIG.top[i])); });
+    ['b1','b2','b3','b4'].forEach(function (n, i) { gl.uniform3fv(gl.getUniformLocation(program, 'u_' + n), hexToRgb(CONFIG.bottom[i])); });
+    gl.uniform1f(U.u_grain, CONFIG.grain);
+    var sec = canvas.closest('.songs'), pared = document.getElementById('pared-t');
+    function updateSize() {
+      var dpr = Math.min(window.devicePixelRatio || 1, 1.5) * .6;     // rendered a little smaller: the liquid is soft
+      var w = Math.round(canvas.clientWidth * dpr), h = Math.round(canvas.clientHeight * dpr);
+      if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h); gl.uniform2f(U.u_resolution, w, h); }
+      // the colour change sits between the two songs
+      var sr = sec.getBoundingClientRect(), pr = pared.getBoundingClientRect();
+      gl.uniform1f(U.u_split, Math.min(.8, Math.max(.3, (pr.top - sr.top - innerHeight * .22) / sr.height)));
+    }
+    if ('ResizeObserver' in window) new ResizeObserver(updateSize).observe(canvas);
+    addEventListener('resize', updateSize); updateSize();
+    var isVisible = true;
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { isVisible = es[0].isIntersecting; }).observe(canvas);
+    // a spring rather than a plain lerp: the wake keeps drifting a moment after the cursor stops
+    var mx = .5, my = .5, vx = 0, vy = 0, tmx = .5, tmy = .5, force = 0;
+    var trail = new Float32Array([.5, .5, .5, .5, .5, .5, .5, .5]);
+    addEventListener('pointermove', function (e) { var r = canvas.getBoundingClientRect(); tmx = (e.clientX - r.left) / r.width; tmy = 1 - (e.clientY - r.top) / r.height; }, { passive: true });
+    addEventListener('touchmove', function (e) { var t = e.touches[0]; if (!t) return; var r = canvas.getBoundingClientRect(); tmx = (t.clientX - r.left) / r.width; tmy = 1 - (t.clientY - r.top) / r.height; }, { passive: true });
+    function stepMouse() {
+      vx += (tmx - mx) * .035; vy += (tmy - my) * .035;
+      vx *= .86; vy *= .86;
+      mx += vx; my += vy;
+      var speed = Math.hypot(vx * canvas.clientWidth, vy * canvas.clientHeight);   // px per frame
+      force = Math.max(force * .975, Math.min(1.4, speed / 22));                     // rises fast, fades slowly, like smoke
+      trail[0] = mx; trail[1] = my;
+      for (var i = 1; i < 4; i++) { trail[i * 2] += (trail[i * 2 - 2] - trail[i * 2]) * .09; trail[i * 2 + 1] += (trail[i * 2 - 1] - trail[i * 2 + 1]) * .09; }
+    }
+    var start = performance.now();
+    function render(now) {
+      if (isVisible) {
+        stepMouse();
+        gl.uniform2f(U.u_mouse, mx, my);
+        gl.uniform2fv(U.u_trail, trail);
+        gl.uniform1f(U.u_force, reduce ? 0 : force);
+        gl.uniform1f(U.u_time, reduce ? 3 : (now - start) * 0.001 * CONFIG.speed);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+      }
+      if (!reduce) requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+    if (reduce) addEventListener('scroll', function () { requestAnimationFrame(render); }, { passive: true });
+  })();
+
+  /* ---------- the cursor colours the songs: blue by Flor en el Mar, orange by La Pared ---------- */
+  (function () {
+    var cv = document.getElementById('paint'), sec = cv.closest('.songs');
+    var ctx = cv.getContext('2d'); if (!ctx) return;
+    var S = .5, pts = [], last = null, hue = 0;
+    var TOP = [[120,140,255],[170,140,255],[150,200,255],[205,170,255]];  // blues and violets
+    var BOT = [[255,170,60],[255,214,110],[255,130,70],[255,190,120]];    // oranges and yellows
+    function size() { var r = sec.getBoundingClientRect(); cv.width = Math.round(r.width * S); cv.height = Math.round(r.height * S); }
+    size(); addEventListener('resize', size);
+    function colorAt(yFrac) {
+      var o = Math.min(Math.max((yFrac - .38) / .2, 0), 1); o = o * o * (3 - 2 * o);
+      hue += .012; var i = Math.floor(hue) % 4, f = hue - Math.floor(hue), j = (i + 1) % 4;
+      var c = [0,1,2].map(function (k) {
+        var top = TOP[i][k] + (TOP[j][k] - TOP[i][k]) * f, bot = BOT[i][k] + (BOT[j][k] - BOT[i][k]) * f;
+        return Math.round(top + (bot - top) * o);
+      });
+      return c;
+    }
+    function add(clientX, clientY) {
+      var r = sec.getBoundingClientRect();
+      if (clientY < r.top || clientY > r.bottom) { last = null; return; }
+      var x = (clientX - r.left) * S, y = (clientY - r.top) * S;
+      if (last) {
+        var dx = x - last[0], dy = y - last[1], n = Math.min(12, Math.ceil(Math.hypot(dx, dy) / 6));
+        for (var k = 1; k <= n; k++) pts.push([last[0] + dx * k / n, last[1] + dy * k / n, y / cv.height]);
+      } else pts.push([x, y, y / cv.height]);
+      last = [x, y];
+    }
+    addEventListener('pointermove', function (e) { add(e.clientX, e.clientY); }, { passive: true });
+    addEventListener('touchmove', function (e) { var t = e.touches[0]; if (t) add(t.clientX, t.clientY); }, { passive: true });
+    sec.addEventListener('pointerleave', function () { last = null; });
+    var visible = true;
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; }).observe(sec);
+    (function loop(ms) {
+      if (visible) {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = 'rgba(0,0,0,' + (reduce ? .08 : .012) + ')';
+        ctx.fillRect(0, 0, cv.width, cv.height);
+        ctx.globalCompositeOperation = 'source-over';
+        var t = ms / 1000, R = Math.max(cv.width, 600) * .055;
+        for (var i = 0; i < pts.length; i++) {
+          var p = pts[i], c = colorAt(p[2]);
+          var sx = p[0] + Math.sin(t * 2 + i * .3) * R * .35, sy = p[1] + Math.cos(t * 2 + i * .3) * R * .35;  // a little swirl in the stroke
+          var g = ctx.createRadialGradient(sx, sy, 0, sx, sy, R);
+          g.addColorStop(0, 'rgba(' + c + ',.34)'); g.addColorStop(.6, 'rgba(' + c + ',.14)'); g.addColorStop(1, 'rgba(' + c + ',0)');
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sx, sy, R, 0, Math.PI * 2); ctx.fill();
+        }
+        pts.length = 0;
+      }
+      requestAnimationFrame(loop);
+    })(0);
+  })();
+
+
+  /* ---------- the genres: letters of dream pop drift; a tap shows each lettering on touch screens ---------- */
+  document.querySelectorAll('[data-split]').forEach(function (el) {
+    var t = el.textContent; el.textContent = '';
+    Array.prototype.forEach.call(t, function (ch, i) {
+      var c = document.createElement('span'), s = document.createElement('i');
+      c.className = 'ch'; c.style.setProperty('--i', i); c.style.setProperty('--r', ((Math.random() * 2 - 1) * 22).toFixed(1) + 'deg');
+      s.style.setProperty('--i', i); s.textContent = ch === ' ' ? '\u00a0' : ch; c.appendChild(s); el.appendChild(c);
+    });
+  });
+  document.querySelectorAll('.g').forEach(function (g) {
+    g.addEventListener('click', function () { var on = !g.classList.contains('on'); document.querySelectorAll('.g.on').forEach(function (x) { x.classList.remove('on'); }); if (on) g.classList.add('on'); });
+  });
+
+  /* ---------- the logo leans, very slowly, toward the cursor ---------- */
+  (function () {
+    var lean = document.getElementById('lean'); if (!lean || reduce) return;
+    var x = 0, y = 0, tx = 0, ty = 0;
+    addEventListener('pointermove', function (e) { tx = (e.clientX / innerWidth - .5); ty = (e.clientY / innerHeight - .5); }, { passive: true });
+    (function loop() { x += (tx - x) * .02; y += (ty - y) * .02; lean.style.transform = 'translate(' + (x * 26).toFixed(2) + 'px,' + (y * 18).toFixed(2) + 'px) rotate(' + (x * 1.6).toFixed(2) + 'deg)'; requestAnimationFrame(loop); })();
+  })();
+
+
+  /* ---------- the meaning of the name: word by word ---------- */
+  (function () {
+    var q = document.getElementById('quote-words'); if (!q) return;
+    var n = 0;
+    function wrap(node) {
+      Array.prototype.slice.call(node.childNodes).forEach(function (c) {
+        if (c.nodeType === 3) {
+          var frag = document.createDocumentFragment();
+          c.textContent.split(/(\s+)/).forEach(function (part) {
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+            var w = document.createElement('span'); w.className = 'w'; w.style.setProperty('--i', n++); w.textContent = part; frag.appendChild(w);
+          });
+          node.replaceChild(frag, c);
+        } else if (c.nodeType === 1) {
+          wrap(c);
+        }
+      });
+    }
+    wrap(q);
+    if ('IntersectionObserver' in window && !reduce) {
+      var io = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { q.classList.add('in'); io.disconnect(); } }, { threshold: .3 });
+      io.observe(q);
+    } else q.classList.add('in');
+  })();
+
+
+  /* ---------- NOSOTROS: one span per letter so each can breathe on its own ---------- */
+  document.querySelectorAll('[data-letters]').forEach(function (el) {
+    var t = el.textContent; el.textContent = '';
+    Array.prototype.forEach.call(t, function (ch, i) { var s = document.createElement('span'); s.className = 'l'; s.style.setProperty('--i', i); s.textContent = ch; el.appendChild(s); });
+  });
+
+
+  /* ---------- loading screen: waits for the meadow, the logo and the fonts (3 s at most) ---------- */
+  (function () {
+    var loader = document.getElementById('loader');
+    function decode(src) { return new Promise(function (res) { var i = new Image(); i.onload = function () { (i.decode ? i.decode() : Promise.resolve()).then(res, res); }; i.onerror = res; i.src = src; }); }
+    var ready = Promise.all([
+      decode('img/campo.jpg'), decode('img/logo.webp'),
+      document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()
+    ]);
+    var atLeast = new Promise(function (res) { setTimeout(res, 900); });
+    var atMost = new Promise(function (res) { setTimeout(res, 3000); });
+    Promise.race([Promise.all([ready, atLeast]), atMost]).then(function () {
+      root.classList.add('ready');
+      if (!loader) return;
+      loader.classList.add('out');
+      setTimeout(function () { loader.remove(); }, 1500);
+    });
+  })();
+
+  /* ---------- the personitas at the end: a click turns them orange right away ---------- */
+  (function () {
+    var btn = document.getElementById('emblem'); if (!btn) return;
+    var e = btn.querySelector('.emblem'), t;
+    btn.addEventListener('click', function () {
+      e.classList.remove('flash'); void e.offsetWidth; e.classList.add('flash');
+      clearTimeout(t); t = setTimeout(function () { e.classList.remove('flash'); }, 1700);
+    });
+  })();
+
+  /* ---------- soft entrances ---------- */
+  requestAnimationFrame(function () {
+    var items = document.querySelectorAll('.rise, .title-in');
+    if ('IntersectionObserver' in window && !reduce) {
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { rootMargin: '0px 0px -8% 0px' });
+      items.forEach(function (el) { io.observe(el); });
+      setTimeout(function () { items.forEach(function (el) { if (el.getBoundingClientRect().top < innerHeight) el.classList.add('in'); }); }, 900);
+    } else items.forEach(function (el) { el.classList.add('in'); });
+  });
+
+  /* ---------- names on the photo open on tap too ---------- */
+  document.querySelectorAll('.who button').forEach(function (b) {
+    b.addEventListener('click', function () { var li = b.parentElement, on = !li.classList.contains('open'); document.querySelectorAll('.who.open').forEach(function (o) { o.classList.remove('open'); }); if (on) li.classList.add('open'); });
+  });
+
+  /* ---------- scroll: the meadow drifts, the logo dissolves, the personitas turn ---------- */
+  var lockup = document.getElementById('lockup'), meadow = document.getElementById('meadow').parentElement, mark = document.getElementById('mark');
+  function onScroll() {
+    var y = scrollY, p = Math.min(y / (innerHeight * .9), 1);
+    lockup.style.opacity = 1 - p * .9;
+    lockup.style.filter = 'blur(' + (p * 10).toFixed(1) + 'px)';
+    lockup.style.transform = 'translateY(' + (p * -40).toFixed(1) + 'px)';
+    mark.style.setProperty('--r', (y * .06) + 'deg');
+  }
+  if (!reduce) { addEventListener('scroll', onScroll, { passive: true }); onScroll(); }
+
+  /* ---------- days since 10 August 2025, and the city clock ---------- */
+  var days = Math.floor((Date.now() - Date.UTC(2025, 7, 10, 3)) / 864e5) + 1;
+  document.querySelectorAll('[data-days]').forEach(function (el) { if (days > 0) el.textContent = days; });
+  var clock = document.getElementById('clock');
+  function tick() { try { clock.textContent = new Intl.DateTimeFormat('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Argentina/Cordoba' }).format(new Date()); } catch (e) {} }
+  tick(); setInterval(tick, 20000);
+})();
+</script>
+</body>
+</html>
